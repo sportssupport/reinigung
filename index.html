@@ -301,12 +301,10 @@ function fotos(list){
     `<button class="loading" data-foto="${i}" aria-label="Foto vergrößern"><img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onload="this.classList.add('ok');this.parentNode.classList.remove('loading')" onerror="fotoErr(this)"><span class="zoom">${icoZoom}</span></button>`
   ).join("")+`</div>`;
 }
-// Info-Text: Stichwörter, getrennt durch ", ", werden untereinander als Liste gezeigt
+// Info-Text: wird so angezeigt, wie er im Sheet steht
 function infoHtml(txt,cls){
-  const parts=String(txt||"").split(/, |\n/).map(x=>x.trim().replace(/,+$/,"").trim()).filter(Boolean);
-  if(!parts.length) return "";
-  if(parts.length===1) return `<div class="${cls}">${esc(parts[0])}</div>`;
-  return `<ul class="${cls} kw">${parts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+  const t=String(txt||"").trim();
+  return t?`<div class="${cls}">${esc(t)}</div>`:"";
 }
 // Name einer Unteraufgabe: mehrere Stichwörter (", ") -> untereinander
 function nameHtml(txt){
