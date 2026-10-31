@@ -71,6 +71,8 @@ button.t-head:active{background:#f6f6f6}
 .s-top{display:flex;gap:12px;align-items:flex-start}
 .s-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid #2b2b2b;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px}
 .s-name{font-size:18px;line-height:1.3;letter-spacing:.3px}
+.rep{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin:14px 0 4px;padding:13px;border:1.5px solid #1a1a1a;border-radius:12px;font-size:17px;letter-spacing:.5px;color:#000;text-decoration:none;background:#fff;transition:background-color .15s,transform .12s;-webkit-tap-highlight-color:transparent}
+.rep:active{background:#f3f3f3;transform:scale(.99)}
 .t-x{display:block;width:fit-content;margin-top:6px;font-size:12px;letter-spacing:1px;background:var(--yellow);border-radius:4px;padding:2px 7px;text-transform:uppercase}
 .s-badge{display:inline-block;margin-left:6px;vertical-align:2px;font-size:12px;letter-spacing:1px;background:var(--yellow);border-radius:4px;padding:2px 7px;white-space:nowrap;text-transform:uppercase}
 .s-info{margin:5px 0 0 38px;font-size:16px;line-height:1.45;color:#333;white-space:pre-line}
@@ -316,6 +318,16 @@ function nameHtml(txt){
   if(parts.length<2) return esc(parts[0]||txt||"");
   return `<ul class="kw kw-n">${parts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
 }
+/* ---------- Problem melden (WhatsApp) ---------- */
+// Öffnet WhatsApp mit fertigem Text; dort die Reinigungsgruppe auswählen.
+const icoMeld=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z" stroke="#000" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 8v4M12 14.2v.1" stroke="#000" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+function meldenText(name){
+  const d=dOf(SEL), wi=(d.getDay()+6)%7;
+  return `Reinigung Nacht ${WD[(wi+6)%7]} → ${WD[wi]} (${d.getDate()}.${d.getMonth()+1}.) · ${name}: `;
+}
+function meldenBtn(name){
+  return `<a class="rep" href="https://wa.me/?text=${encodeURIComponent(meldenText(name))}">${icoMeld}Problem melden</a>`;
+}
 function fotoErr(img){const b=img.parentNode;b.classList.remove("loading");b.disabled=true;b.innerHTML='<span class="err">Foto nicht verfügbar.<br>In Google Drive auf „Jeder mit dem Link“ freigeben.</span>';}
 function catClass(name,i){
   const n=String(name).toLowerCase();
@@ -325,7 +337,7 @@ function catClass(name,i){
 }
 function task(a,id){
   const unter=a.unter||[];
-  const has = unter.length || a.info || (a.fotos&&a.fotos.length);
+  const has = true;   // jede Aufgabe lässt sich aufklappen (mind. "Problem melden")
   const nX = unter.filter(u=>u.wann).length;
   const xLabel = SEL===today()?"Heute extra":"Extra";
   const headInner = `<span class="t-mid"><span class="t-name">${esc(a.name)}</span>${nX?`<span class="t-x">${xLabel}${nX>1?" · "+nX:""}</span>`:""}</span>
@@ -337,7 +349,7 @@ function task(a,id){
   const isOpen=open.has(id);
   return `<div class="task${nX?" has-x":""}${isOpen?" open":""}" id="${id}">
     <button class="t-head" aria-expanded="${isOpen}" aria-controls="${id}-b">${headInner}</button>
-    <div class="t-body" id="${id}-b"><div class="t-in"><div class="t-pad">${infoHtml(a.info,"t-info")}${fotos(a.fotos)}${steps}</div></div></div>
+    <div class="t-body" id="${id}-b"><div class="t-in"><div class="t-pad">${infoHtml(a.info,"t-info")}${fotos(a.fotos)}${steps}${meldenBtn(a.name)}</div></div></div>
   </div>`;
 }
 function body(){
