@@ -385,7 +385,8 @@ function catClass(name,i){
   return i===0?"":"cat-other";
 }
 function task(a,id){
-  const unter=a.unter||[];
+  // Extras (Schritte mit eigenem Wann) immer zuerst, sonst Reihenfolge wie im Sheet
+  const unter=(a.unter||[]).filter(u=>u.wann).concat((a.unter||[]).filter(u=>!u.wann));
   const has = true;   // jede Aufgabe lässt sich aufklappen (mind. "Problem melden")
   const nX = unter.filter(u=>u.wann).length;
   const xLabel = SEL===today()?"Heute extra":"Extra";
